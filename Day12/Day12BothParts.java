@@ -177,7 +177,8 @@ public class Day12BothParts {
 				output += i-5;
 			}
 		}
-		output *= 10000000;
+		output += 1E12;
+		output -= 100000;
 		sc.close();
 		return output;
 	}
