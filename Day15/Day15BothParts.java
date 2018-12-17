@@ -176,6 +176,12 @@ public class Day15BothParts {
 		if (!output.equals("")) {
 			return (output);
 		}
+		if ((data[currentx][currenty - 1] == '$' && data[currentx+1][currenty] == '$')
+				|| (data[currentx][currenty - 1] == '$' && data[currentx-1][currenty] == '$')
+				|| (data[currentx][currenty + 1] == '$' && data[currentx+1][currenty] == '$')
+				|| (data[currentx][currenty + 1] == '$' && data[currentx-1][currenty] == '$')) {
+			return "";
+		}
 		if (data[currentx][currenty - 1] == '+') {
 			return "1";
 		}
