@@ -5,6 +5,7 @@ import java.util.Scanner;
 public class Day15BothParts {
 
 	public static String path = "C:\\Users\\aidan\\Desktop\\";
+	public static int weapon = 3;
 
 	public static void main(String args[]) throws FileNotFoundException {
 		System.out.println("Example = " + Game());
@@ -25,8 +26,7 @@ public class Day15BothParts {
 				entities[e][4] = 0;
 			int count = 1;
 			out: while (nextRound) {
-				System.out.println(count+ "/" + entities.length);
-				count++;
+				
 				int current = entities.length;
 				for (int e = 0; e < entities.length; e++) {
 					if (entities[e][4] == 0 && entities[e][2] > 0) {
@@ -57,7 +57,8 @@ public class Day15BothParts {
 				}
 
 				move(data, entities, current);
-				
+				System.out.println(count+ "/" + entities.length + " " + entities[current][3]);
+				count++;
 				
 			}
 		}
@@ -121,7 +122,12 @@ public class Day15BothParts {
 				}
 			}
 			if (checker) {
-				entities[recieveingEntity][2] -= 3;
+				if (entities[current][3] == 0) {
+					entities[recieveingEntity][2] -= weapon;
+				} else {
+					entities[recieveingEntity][2] -= 3;
+				}
+				
 				if (entities[recieveingEntity][2] <= 0) {
 					data[entities[recieveingEntity][0]][entities[recieveingEntity][1]] = '.';
 				}
