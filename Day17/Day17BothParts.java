@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class Day17BothParts {
 
-	public static String path = "";
+	public static String path = "C:\\Users\\aidan\\Desktop\\";
 
 	public static void main(String args[]) throws FileNotFoundException {
 		int[][] data = toData();
@@ -34,7 +34,7 @@ public class Day17BothParts {
 
 		for (int y = 4; y < data[0].length - 1; y++) {
 			for (int x = 0; x < data.length; x++) {
-				if (data[x][y] == 3 && data[x][y - 1] == 1) {
+				if (data[x][y] == 3 && (data[x+1][y - 1] == 1 ||data[x-1][y - 1] == 1 )) {
 					int x1 = x;
 					int y1 = y - 1;
 					data[x][y1] = 3;
