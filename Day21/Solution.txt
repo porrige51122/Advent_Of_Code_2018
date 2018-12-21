@@ -1,4 +1,5 @@
 ReUsed Day19 code
+WARNING, NO MATTER THE INPUT, THE CODE NEVER FINISHES
 I looked for the input that checked reg[0] which was 28. I then looked for the condition which caused 28 to get triggered. this happened after around 1880 recurrsions. then it checked if the number in reg[1] was larger. if so the program would end. the number was 11285115 which when entering that number into AOC I had a correct answer.
 
 Next, I made the program only print when reg[ip] = 28 and ran it with reg[0] = 0. I ran it for around 10 minutes to get 12000 values.
