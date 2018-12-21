@@ -1,0 +1,2 @@
+ReUsed Day19 code
+I looked for the input that checked reg[0] which was 28. I then looked for the condition which caused 28 to get triggered. this happened after around 1880 recurrsions. then it checked if the number in reg[1] was larger. if so the program would end. the number was 11285115 which when entering that number into AOC I had a correct answer.
