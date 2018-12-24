@@ -4,7 +4,7 @@ I looked for the input that checked reg[0] which was 28. I then looked for the c
 
 Next, I made the program only print when reg[ip] = 28 and ran it with reg[0] = 0. I ran it for around 10 minutes to get 12000 values.
 I then took the most recent value for reg[1] which was not a duplicate of the data. I believed the data would loop eventually so with
-this method I took the last data before it loops which fills the criteria for part 2.
+this method I took the last data before it loops which fills the criteria for part 2. 
 
 Part 1 - 11285115
 Part 2 - 2947113
