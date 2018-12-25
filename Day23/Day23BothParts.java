@@ -12,7 +12,7 @@ public class Day23BothParts {
 	}
 
 	private static int part2() throws FileNotFoundException {
-		ArrayList<String> data = toData("input.txt");
+		ArrayList<String> data = toData("Input.txt");
 		int scale = 10000000;
 		int maxx = 0, maxy = 0, maxz = 0;
 		int minx = Integer.MAX_VALUE, miny = Integer.MAX_VALUE, minz = Integer.MAX_VALUE;
@@ -52,7 +52,6 @@ public class Day23BothParts {
 			besty = 0;
 			bestz = 0;
 			for (int z = minz; z < maxz; z++) {
-				System.out.println(z+ " out of " +maxz);
 				for (int y = miny; y < maxy; y++) {
 					for (int x = minx; x < maxx; x++) {
 						int count = 0;
@@ -79,18 +78,16 @@ public class Day23BothParts {
 					}
 				}
 			}
-			System.out.println(highestCount);
-			System.out.println(bestx + " " + besty + " " + bestz);
-			maxx = bestx + 5;
-			minx = bestx - 5;
-			maxy = besty + 5;
-			miny = besty - 5;
-			maxz = bestz + 5;
-			minz = bestz - 5;
-			output += (scale * bestx) + (scale * besty) + (scale * bestz);
-			System.out.println((scale * bestx) + "," + (scale * besty) + "," + (scale * bestz));
+			maxx = (bestx * 10) + 5;
+			minx = (bestx * 10) - 5;
+			maxy = (besty * 10) + 5;
+			miny = (besty * 10) - 5;
+			maxz = (bestz * 10) + 5;
+			minz = (bestz * 10) - 5;
+			
 			scale /= 10;
 		}
+		output += bestx + besty + bestz;
 		return output;
 	}
 
