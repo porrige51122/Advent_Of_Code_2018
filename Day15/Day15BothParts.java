@@ -6,16 +6,18 @@ import java.util.Scanner;
 
 public class Day15BothParts {
 
-	public static String path = "";
+	public static String path = "C:\\Users\\aidan\\Desktop\\";
 	public static int weapon = 3;
+//	public static int weapon = 30;
 
 	public static void main(String args[]) throws FileNotFoundException {
 //		PrintStream out = new PrintStream(new FileOutputStream(path +"output.txt"));
 //		System.setOut(out);
-		
+
 		System.out.println("Part 1 = " + Part1());
+//		System.out.println("Part 2 = " + Part2());
 	}
-	
+
 	public static int Part1() throws FileNotFoundException {
 		char[][] data = toData("Input.txt");
 		int[][] entities = toEntities(data);
@@ -24,16 +26,14 @@ public class Day15BothParts {
 		Boolean endG = true;
 		Boolean endE = true;
 		while (endG && endE) {
-			
 			Boolean nextRound = true;
 			round++;
-			printData(data, entities);
+//			printData(data, entities);
 			System.out.println("round = " + round);
+			int count = 0;
 			for (int e = 0; e < entities.length; e++)
 				entities[e][4] = 0;
-			int count = 1;
 			out: while (nextRound) {
-
 				int current = entities.length;
 				for (int e = 0; e < entities.length; e++) {
 					if (entities[e][4] == 0 && entities[e][2] > 0) {
@@ -64,8 +64,8 @@ public class Day15BothParts {
 				}
 
 				move(data, entities, current);
-//				System.out.println(count+ "/" + entities.length + " " + entities[current][3]);
-//				count++;
+//				System.out.println(count+ "/" + entities.length);
+				count++;
 
 			}
 		}
@@ -76,7 +76,6 @@ public class Day15BothParts {
 			}
 		}
 
-		System.out.println(entitiesLeft);
 		return (round - 1) * entitiesLeft;
 	}
 
@@ -153,8 +152,28 @@ public class Day15BothParts {
 		int counter = destination(data, entities, current);
 		clearData(data, ' ');
 		if (counter >= 1) {
-			getBestDest(data);
-			String path = path(data, entities[current][0], entities[current][1], counter, 0);
+			int[] bestDest = getBestDest(data);
+			int minx = entities[current][0] - bestDest[0];
+			int miny = entities[current][1] - bestDest[1];
+			int minN;
+			int minS;
+			int minE;
+			int minW;
+			if (minx > 0) {
+				minW = Math.abs(minx);
+				minE = 0;
+			} else {
+				minW = 0;
+				minE = Math.abs(minx);
+			}
+			if (miny > 0) {
+				minN = Math.abs(miny);
+				minS = 0;
+			} else {
+				minN = 0;
+				minS = Math.abs(miny);
+			}
+			String path = path(data, entities[current][0], entities[current][1], counter, 0, minN, minS, minE, minW);
 			clearData(data, '+');
 			char[] patharr = path.toCharArray();
 			int direction = patharr[patharr.length - 1] - 48;
@@ -213,7 +232,7 @@ public class Day15BothParts {
 		entities[current][4] = 1;
 	}
 
-	private static void getBestDest(char[][] data) {
+	private static int[] getBestDest(char[][] data) {
 		int bestx = 0;
 		int besty = 0;
 		out: for (int y = 0; y < data[0].length; y++) {
@@ -227,7 +246,11 @@ public class Day15BothParts {
 			}
 		}
 		data[bestx][besty] = '+';
-		
+		int[] bestxy = new int[2];
+		bestxy[0] = bestx;
+		bestxy[1] = besty;
+		return bestxy;
+
 	}
 
 	public static void movement(char[][] data, int[][] entities, int current, int direction) {
@@ -268,9 +291,11 @@ public class Day15BothParts {
 		}
 	}
 
-	public static String path(char[][] data, int currentx, int currenty, int limit, int direction) {
+	public static String path(char[][] data, int currentx, int currenty, int limit, int direction, int minN, int minS,
+			int minE, int minW) {
 		String output = "";
-		if (limit == 0) {
+		if (limit == 0 || ((minN > 0 ? minN : 0) + (minE > 0 ? minE : 0) + (minS > 0 ? minS : 0)
+				+ (minW > 0 ? minW : 0)) > limit) {
 			return "";
 		}
 		if (!output.equals("")) {
@@ -298,7 +323,18 @@ public class Day15BothParts {
 		}
 		if (data[currentx][currenty - 1] == '.' && direction != 4) {
 			data[currentx][currenty - 1] = '$';
-			output += path(data, currentx, currenty - 1, limit - 1, 1);
+			minN--;
+			Boolean opposite = false;
+			if (minN < 0) {
+				opposite = true;
+				minS++;
+			}
+			output += path(data, currentx, currenty - 1, limit - 1, 1, minN, minS, minE, minW);
+			minN++;
+			if (opposite) {
+				opposite = false;
+				minS--;
+			}
 			data[currentx][currenty - 1] = '.';
 			if (!output.equals("")) {
 				return (output + "1");
@@ -306,7 +342,18 @@ public class Day15BothParts {
 		}
 		if (data[currentx - 1][currenty] == '.' && direction != 3) {
 			data[currentx - 1][currenty] = '$';
-			output += path(data, currentx - 1, currenty, limit - 1, 2);
+			minW--;
+			Boolean opposite = false;
+			if (minW < 0) {
+				opposite = true;
+				minE++;
+			}
+			output += path(data, currentx - 1, currenty, limit - 1, 2, minN, minS, minE, minW);
+			minW++;
+			if (opposite) {
+				opposite = false;
+				minE--;
+			}
 			data[currentx - 1][currenty] = '.';
 			if (!output.equals("")) {
 				return (output + "2");
@@ -314,7 +361,18 @@ public class Day15BothParts {
 		}
 		if (data[currentx + 1][currenty] == '.' && direction != 2) {
 			data[currentx + 1][currenty] = '$';
-			output += path(data, currentx + 1, currenty, limit - 1, 3);
+			minE--;
+			Boolean opposite = false;
+			if (minE < 0) {
+				opposite = true;
+				minW++;
+			}
+			output += path(data, currentx + 1, currenty, limit - 1, 3, minN, minS, minE, minW);
+			minE++;
+			if (opposite) {
+				opposite = false;
+				minW--;
+			}
 			data[currentx + 1][currenty] = '.';
 			if (!output.equals("")) {
 				return (output + "3");
@@ -322,7 +380,18 @@ public class Day15BothParts {
 		}
 		if (data[currentx][currenty + 1] == '.' && direction != 1) {
 			data[currentx][currenty + 1] = '$';
-			output += path(data, currentx, currenty + 1, limit - 1, 4);
+			minS--;
+			Boolean opposite = false;
+			if (minS < 0) {
+				opposite = true;
+				minN++;
+			}
+			output += path(data, currentx, currenty + 1, limit - 1, 4, minN, minS, minE, minW);
+			minS++;
+			if (opposite) {
+				opposite = false;
+				minN--;
+			}
 			data[currentx][currenty + 1] = '.';
 			if (!output.equals("")) {
 				return (output + "4");
@@ -335,7 +404,7 @@ public class Day15BothParts {
 		data[entities[current][0]][entities[current][1]] = '!';
 		int counter = 0;
 		while (counter < data.length + data[0].length) {
-			
+
 			Boolean checker = true;
 			for (int y = 0; y < data[0].length; y++) {
 				for (int x = 0; x < data.length; x++) {
@@ -396,7 +465,7 @@ public class Day15BothParts {
 				}
 			}
 		}
-		
+
 	}
 
 	public static void clearData(char[][] data, char input) {
