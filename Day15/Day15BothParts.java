@@ -1,32 +1,39 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.Scanner;
 
 public class Day15BothParts {
 
-	public static String path = "C:\\Users\\aidan\\Desktop\\";
+	public static String path = "";
 	public static int weapon = 3;
 
 	public static void main(String args[]) throws FileNotFoundException {
-		System.out.println("Example = " + Game());
+//		PrintStream out = new PrintStream(new FileOutputStream(path +"output.txt"));
+//		System.setOut(out);
+		
+		System.out.println("Part 1 = " + Part1());
 	}
-
-	public static int Game() throws FileNotFoundException {
-		char[][] data = toData("Example.txt");
+	
+	public static int Part1() throws FileNotFoundException {
+		char[][] data = toData("Input.txt");
 		int[][] entities = toEntities(data);
 		int round = 0;
 		printData(data, entities);
 		Boolean endG = true;
 		Boolean endE = true;
 		while (endG && endE) {
+			
 			Boolean nextRound = true;
 			round++;
+			printData(data, entities);
 			System.out.println("round = " + round);
 			for (int e = 0; e < entities.length; e++)
 				entities[e][4] = 0;
 			int count = 1;
 			out: while (nextRound) {
-				
+
 				int current = entities.length;
 				for (int e = 0; e < entities.length; e++) {
 					if (entities[e][4] == 0 && entities[e][2] > 0) {
@@ -39,9 +46,9 @@ public class Day15BothParts {
 					endE = false;
 					nextRound = false;
 					for (int e = 0; e < entities.length; e++) {
-						if (entities[e][2] >= 0 && entities[e][3] == 0) {
+						if (entities[e][2] > 0 && entities[e][3] == 0) {
 							endE = true;
-						} else if (entities[e][2] >= 0 && entities[e][3] == 1) {
+						} else if (entities[e][2] > 0 && entities[e][3] == 1) {
 							endG = true;
 						}
 					}
@@ -57,9 +64,9 @@ public class Day15BothParts {
 				}
 
 				move(data, entities, current);
-				System.out.println(count+ "/" + entities.length + " " + entities[current][3]);
-				count++;
-				
+//				System.out.println(count+ "/" + entities.length + " " + entities[current][3]);
+//				count++;
+
 			}
 		}
 		int entitiesLeft = 0;
@@ -68,8 +75,77 @@ public class Day15BothParts {
 				entitiesLeft += entities[e][2];
 			}
 		}
+
+		System.out.println(entitiesLeft);
+		return (round - 1) * entitiesLeft;
+	}
+
+	public static int Part2() throws FileNotFoundException {
+		char[][] data = toData("Input.txt");
+		int[][] entities = toEntities(data);
+		int round = 0;
 		printData(data, entities);
-		System.out.println(round);
+		Boolean endG = true;
+		Boolean endE = true;
+		while (endG && endE) {
+			Boolean nextRound = true;
+			round++;
+			printData(data, entities);
+			System.out.println("round = " + round);
+			for (int e = 0; e < entities.length; e++)
+				entities[e][4] = 0;
+			int count = 1;
+			out: while (nextRound) {
+
+				int current = entities.length;
+				for (int e = 0; e < entities.length; e++) {
+					if (entities[e][4] == 0 && entities[e][2] > 0) {
+						current = e;
+						break;
+					}
+				}
+				for (int e = 0; e < entities.length; e++) {
+					if (entities[e][2] <= 0 && entities[e][3] == 0) {
+						endE = false;
+						break out;
+					}
+				}
+				if (current == entities.length) {
+					endG = false;
+					endE = false;
+					nextRound = false;
+					for (int e = 0; e < entities.length; e++) {
+						if (entities[e][2] > 0 && entities[e][3] == 0) {
+							endE = true;
+						} else if (entities[e][2] > 0 && entities[e][3] == 1) {
+							endG = true;
+						}
+					}
+					break out;
+				}
+				for (int e = 0; e < entities.length; e++) {
+					if (entities[e][4] == 0 && entities[e][2] > 0) {
+						if ((entities[e][1] == entities[current][1] && entities[e][0] < entities[current][0])
+								|| (entities[e][1] < entities[current][1])) {
+							current = e;
+						}
+					}
+				}
+
+				move(data, entities, current);
+//				System.out.println(count+ "/" + entities.length + " " + entities[current][3]);
+//				count++;
+
+			}
+		}
+		int entitiesLeft = 0;
+		for (int e = 0; e < entities.length; e++) {
+			if (entities[e][2] >= 0) {
+				entitiesLeft += entities[e][2];
+			}
+		}
+
+		System.out.println(entitiesLeft);
 		return (round - 1) * entitiesLeft;
 	}
 
@@ -77,6 +153,7 @@ public class Day15BothParts {
 		int counter = destination(data, entities, current);
 		clearData(data, ' ');
 		if (counter >= 1) {
+			getBestDest(data);
 			String path = path(data, entities[current][0], entities[current][1], counter, 0);
 			clearData(data, '+');
 			char[] patharr = path.toCharArray();
@@ -127,13 +204,30 @@ public class Day15BothParts {
 				} else {
 					entities[recieveingEntity][2] -= 3;
 				}
-				
+
 				if (entities[recieveingEntity][2] <= 0) {
 					data[entities[recieveingEntity][0]][entities[recieveingEntity][1]] = '.';
 				}
 			}
 		}
 		entities[current][4] = 1;
+	}
+
+	private static void getBestDest(char[][] data) {
+		int bestx = 0;
+		int besty = 0;
+		out: for (int y = 0; y < data[0].length; y++) {
+			for (int x = 0; x < data.length; x++) {
+				if (data[x][y] == '+') {
+					bestx = x;
+					besty = y;
+					clearData(data, '+');
+					break out;
+				}
+			}
+		}
+		data[bestx][besty] = '+';
+		
 	}
 
 	public static void movement(char[][] data, int[][] entities, int current, int direction) {
@@ -182,10 +276,12 @@ public class Day15BothParts {
 		if (!output.equals("")) {
 			return (output);
 		}
-		if ((data[currentx][currenty - 1] == '$' && data[currentx+1][currenty] == '$')
-				|| (data[currentx][currenty - 1] == '$' && data[currentx-1][currenty] == '$')
-				|| (data[currentx][currenty + 1] == '$' && data[currentx+1][currenty] == '$')
-				|| (data[currentx][currenty + 1] == '$' && data[currentx-1][currenty] == '$')) {
+		if ((data[currentx][currenty - 1] == '$' && data[currentx + 1][currenty] == '$')
+				|| (data[currentx][currenty - 1] == '$' && data[currentx - 1][currenty] == '$')
+				|| (data[currentx][currenty + 1] == '$' && data[currentx + 1][currenty] == '$')
+				|| (data[currentx][currenty + 1] == '$' && data[currentx - 1][currenty] == '$')
+				|| (data[currentx][currenty + 1] == '$' && data[currentx][currenty - 1] == '$')
+				|| (data[currentx + 1][currenty] == '$' && data[currentx - 1][currenty] == '$')) {
 			return "";
 		}
 		if (data[currentx][currenty - 1] == '+') {
@@ -239,6 +335,7 @@ public class Day15BothParts {
 		data[entities[current][0]][entities[current][1]] = '!';
 		int counter = 0;
 		while (counter < data.length + data[0].length) {
+			
 			Boolean checker = true;
 			for (int y = 0; y < data[0].length; y++) {
 				for (int x = 0; x < data.length; x++) {
@@ -254,6 +351,7 @@ public class Day15BothParts {
 									&& entities[current][3] != entities[e][3] && entities[e][2] > 0) {
 
 								data[x][y] = '+';
+//								printData(data, entities);
 								checker = false;
 							}
 						}
@@ -261,7 +359,7 @@ public class Day15BothParts {
 				}
 			}
 			if (checker) {
-				flood(data);
+				flood(data, entities);
 				counter++;
 			} else {
 				return counter;
@@ -270,7 +368,8 @@ public class Day15BothParts {
 		return -1;
 	}
 
-	public static void flood(char[][] data) {
+	public static void flood(char[][] data, int[][] entities) {
+//		printData(data, entities);
 		for (int y = 0; y < data[0].length; y++) {
 			for (int x = 0; x < data.length; x++) {
 				if (data[x][y] == '!') {
@@ -297,6 +396,7 @@ public class Day15BothParts {
 				}
 			}
 		}
+		
 	}
 
 	public static void clearData(char[][] data, char input) {
