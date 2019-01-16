@@ -14,9 +14,8 @@ public class Day01BothParts {
 	private static int part1() throws FileNotFoundException {
 		Scanner sc = new Scanner(new File(path + "input.txt"));
 		int x = 0;
-		while (sc.hasNextLine()) {
+		while (sc.hasNextLine())
 			x += sc.nextInt();
-		}
 		sc.close();
 		return x;
 	}
@@ -28,12 +27,11 @@ public class Day01BothParts {
 			Scanner sc = new Scanner(new File(path + "input.txt"));
 			while (sc.hasNextLine()) {
 				x += sc.nextInt();
-				for (int i = 0; i < y.size(); i++) {
+				for (int i = 0; i < y.size(); i++)
 					if (x == y.get(i)) {
 						sc.close();
 						return x;
 					}
-				}
 				y.add(x);
 			}
 			sc.close();
